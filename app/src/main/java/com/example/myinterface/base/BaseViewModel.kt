@@ -1,7 +1,8 @@
 package com.example.myinterface.base
 
-import androidx.lifecycle.ViewModel
+
 //import com.example.myinterface.di.component.ViewModelInjector
+import androidx.lifecycle.ViewModel
 import com.example.myinterface.di.component.ViewModelInjector
 import com.example.myinterface.di.module.NetworkModule
 import com.example.myinterface.ui.DessertListViewModel
@@ -27,4 +28,5 @@ abstract class BaseViewModel: ViewModel(){
             is DessertViewModel -> injector.inject(this)
         }
     }
+
 }
