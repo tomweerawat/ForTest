@@ -2,9 +2,9 @@ package com.example.myinterface.networking
 
 import android.content.Context
 import android.util.Log
-import com.example.myinterface.Model.BaseApiresponse
-import com.example.myinterface.Model.BaseCollectionResponse
-import com.example.myinterface.Model.DessertDao
+import com.example.myinterface.Model.base.BaseApiresponse
+import com.example.myinterface.Model.base.BaseCollectionResponse
+import com.example.myinterface.Model.Dessert
 import com.example.myinterface.networking.callback.ICallback
 import retrofit2.Call
 import retrofit2.Callback
@@ -20,16 +20,16 @@ class DessertService(val context: Context, retrofit: RetrofitHelper) : IHandler 
         this.dessertService = retrofit.create<IDessertApi>()
     }
 
-    override fun get(callback: ICallback<BaseApiresponse<BaseCollectionResponse<DessertDao>>>) {
-        val dao: List<DessertDao>
-        dessertService!!.getList(1).enqueue(object : Callback<BaseApiresponse<BaseCollectionResponse<DessertDao>>?> {
-            override fun onFailure(call: Call<BaseApiresponse<BaseCollectionResponse<DessertDao>>?>, t: Throwable) {
+    override fun get(callback: ICallback<BaseApiresponse<BaseCollectionResponse<Dessert>>>) {
+        val dao: List<Dessert>
+        dessertService!!.getList(1).enqueue(object : Callback<BaseApiresponse<BaseCollectionResponse<Dessert>>?> {
+            override fun onFailure(call: Call<BaseApiresponse<BaseCollectionResponse<Dessert>>?>, t: Throwable) {
                 Log.e("onError", "onError" + t.message)
             }
 
             override fun onResponse(
-                call: Call<BaseApiresponse<BaseCollectionResponse<DessertDao>>?>,
-                response: Response<BaseApiresponse<BaseCollectionResponse<DessertDao>>?>
+                call: Call<BaseApiresponse<BaseCollectionResponse<Dessert>>?>,
+                response: Response<BaseApiresponse<BaseCollectionResponse<Dessert>>?>
             ) {
                 val dao = response!!.body()
                 callback.onSuccess(dao)
@@ -37,16 +37,16 @@ class DessertService(val context: Context, retrofit: RetrofitHelper) : IHandler 
         })
     }
 
-    public fun loadData(callback: ICallback<BaseApiresponse<BaseCollectionResponse<DessertDao>>>) {
-        val dao: List<DessertDao>
-        dessertService!!.getList(1).enqueue(object : Callback<BaseApiresponse<BaseCollectionResponse<DessertDao>>?> {
-            override fun onFailure(call: Call<BaseApiresponse<BaseCollectionResponse<DessertDao>>?>, t: Throwable) {
+    public fun loadData(callback: ICallback<BaseApiresponse<BaseCollectionResponse<Dessert>>>) {
+        val dao: List<Dessert>
+        dessertService!!.getList(1).enqueue(object : Callback<BaseApiresponse<BaseCollectionResponse<Dessert>>?> {
+            override fun onFailure(call: Call<BaseApiresponse<BaseCollectionResponse<Dessert>>?>, t: Throwable) {
                 Log.e("aaaaaa", "aaaaaa" + t.message)
             }
 
             override fun onResponse(
-                call: Call<BaseApiresponse<BaseCollectionResponse<DessertDao>>?>,
-                response: Response<BaseApiresponse<BaseCollectionResponse<DessertDao>>?>
+                call: Call<BaseApiresponse<BaseCollectionResponse<Dessert>>?>,
+                response: Response<BaseApiresponse<BaseCollectionResponse<Dessert>>?>
             ) {
                 val dao = response!!.body()
                 Log.e("onresponse", "onresponse" + dao)
@@ -57,7 +57,7 @@ class DessertService(val context: Context, retrofit: RetrofitHelper) : IHandler 
 }
 
 interface IHandler {
-    fun get(callback: ICallback<BaseApiresponse<BaseCollectionResponse<DessertDao>>>)
+    fun get(callback: ICallback<BaseApiresponse<BaseCollectionResponse<Dessert>>>)
 
 }
 

@@ -1,65 +1,58 @@
 package com.example.myinterface
 
-import android.content.Context
+
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import com.example.base.recyclerview.BaseList
-import com.example.myinterface.Model.BaseApiresponse
-import com.example.myinterface.Model.BaseCollectionResponse
-import com.example.myinterface.Model.DessertDao
-import com.example.myinterface.adapter.DessertItems
-import com.example.myinterface.networking.DessertService
-import com.example.myinterface.networking.RetrofitHelper
-import com.example.myinterface.networking.callback.ICallback
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.myinterface.databinding.ActivityMainBinding
+import com.example.myinterface.di.ViewModelFactory
+import com.example.myinterface.ui.DessertListViewModel
+import com.google.android.material.snackbar.Snackbar
+
 
 class MainActivity : AppCompatActivity(){
 
-    var service: DessertService? = null
-
-    val mydata : MutableList<DessertDao> = ArrayList()
-
-    lateinit var context: Context
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel: DessertListViewModel
+    private var errorSnackbar: Snackbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        findTelephoneNumber("PETE",object: ITelephoneCallback {
-//            override fun onFinishFinding(phoneNumber: String) {
-//                Toast.makeText(this@MainActivity, "This is my Toast message!"+phoneNumber,
-//                    Toast.LENGTH_LONG).show()
-//            }
-//        })
-//        service = DessertService(applicationContext, RetrofitHelper("https://developers.zomato.com"))
-//        service?.loadData(object: ICallback<BaseApiresponse<BaseCollectionResponse<DessertDao>>> {
-//            override fun onSuccess(response: BaseApiresponse<BaseCollectionResponse<DessertDao>>?) {
-//                Log.d(
-//                    "mycallback",
-//                    "mycallback: " + GsonBuilder().setPrettyPrinting().create().toJson(response?.list)
-//                )
-//                val parse =  GsonBuilder().setPrettyPrinting().create().toJson(response?.list)
-//                this@MainActivity.mydata.add(response?.list!![0].data)
-//                this@MainActivity.addContact(mydata)
-//            }
-//        })
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.postList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .add(R.id.fragment, DessertList.newInstance())
-                .commit()
-        }
+        viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(DessertListViewModel::class.java)
+        viewModel.errorMessage.observe(this, Observer {
+                errorMessage -> if(errorMessage != null) showError(errorMessage) else hideError()
+        })
+        binding.viewModel = viewModel
+
+//        if (savedInstanceState == null) {
+//            supportFragmentManager.beginTransaction()
+//                .add(R.id.fragment, DessertList.newInstance())
+//                .commit()
+//        }
+
     }
 
-    private fun addContact(daos: List<DessertDao>) {
+    private fun showError(@StringRes errorMessage:Int){
+        errorSnackbar = Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_INDEFINITE)
+        errorSnackbar?.setAction("Retry", viewModel.errorClickListener)
+        errorSnackbar?.show()
+    }
 
+    private fun hideError(){
+        errorSnackbar?.dismiss()
     }
     fun findTelephoneNumber(name: String, callback: ITelephoneCallback) {
         callback.onFinishFinding(name)
         callback.onFinishFinding(localClassName)
     }
+
 }
